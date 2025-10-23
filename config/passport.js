@@ -11,17 +11,40 @@ module.exports = function (passport) {
         callbackURL: "http://localhost:3000/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, cb) => {
-        //   User.findOrCreate({ googleId: profile.id }, function (err, user) {
-        //     return done(err, user);
-        //   });
+        const newUser = {
+          googleId: profile.id,
+          displayName: profile.displayName,
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
+          image: profile.photos[0].value,
+        };
+
+        try {
+          //check if user exits
+          let user = await User.findOne({ googleId: profile.id });
+
+          if (user) {
+            cb(null, user);
+          } else {
+            user = await User.create(newUser);
+            cb(null, user);
+          }
+        } catch (error) {
+          condole.log(error);
+        }
       }
     )
   );
 
   passport.serializeUser((user, cb) => cb(null, user.id));
 
-  passport.deserializeUser((user, cb) => {
-    User.findById(id, (err, user) => cb(err, user));
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await User.findById(id);
+      done(null, user);
+    } catch (err) {
+      done(err, null);
+    }
   });
 };
 
