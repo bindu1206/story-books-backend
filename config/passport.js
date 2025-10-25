@@ -30,7 +30,7 @@ module.exports = function (passport) {
             cb(null, user);
           }
         } catch (error) {
-          condole.log(error);
+          console.log(error);
         }
       }
     )
