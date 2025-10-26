@@ -17,6 +17,7 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
     // Fetch stories created by the logged-in user
     try {
         const stories = await Story.find({user: req.user.id}).lean()
+        console.log(req.user)
     res.render('dashboard', {
         name: req.user.firstName,
         stories
