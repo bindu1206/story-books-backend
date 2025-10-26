@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const dotenv = require("dotenv")
 const morgan = require('morgan')
 const { engine } = require('express-handlebars')
+const methodOverride = require('method-override')
 const connectDB = require("./config/db")
 const passport = require('passport')
 const session = require('express-session')
@@ -52,6 +53,9 @@ app.use(session({
     mongoUrl: process.env.MONGO_URI,
     mongooseConnection: mongoose.connection }),
 }))
+
+// Methd override middleware
+app.use(methodOverride('_method'))
 
 //Passport middleware
 app.use(passport.initialize())
